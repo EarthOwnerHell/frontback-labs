@@ -1,0 +1,48 @@
+$primary: rgb(198, 7, 208);
+$theme: dark;
+
+@mixin title($text_color) {
+  font-size: 24px;
+  font-weight: bold;
+  color: $text_color;
+  margin: 0;
+}
+
+.card {
+  @if $theme == dark {
+    background-color: #333;
+    color: #fff;
+  } @else {
+    background-color: #fff;
+    color: #333;
+  }
+  border: 1px solid #ddd;
+  width: 300px;
+  height: auto;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: Arial, sans-serif;
+
+  &__title {
+    @include title($primary);
+  }
+
+  &__description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+}
