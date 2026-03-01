@@ -1,0 +1,70 @@
+$bg: #0f1115;
+$panel: #1a1f29;
+
+.page {
+  background-color: $bg;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.header {
+  height: 50px;
+  background-color: $panel;
+  width: 100%;
+  border-bottom: 1px solid #d0cccc;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.logo {
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.adm_add {
+  display: block;
+  margin: 20px 20px 0 auto;
+  border: 1px solid #4f6487;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: #31405a;
+  color: #eef4ff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.adm_add:hover {
+  background: #3a4d6f;
+  border-color: #6c86b5;
+}
+
+.adm_add:active {
+  transform: translateY(1px);
+}
+
+.adm_add:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(129, 167, 236, 0.35);
+}
+
+.page_container {
+  padding: 28px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.product__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(280px, 360px));
+  gap: 16px;
+  justify-content: center;
+  width: 100%;
+}
