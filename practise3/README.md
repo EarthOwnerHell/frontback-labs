@@ -17,9 +17,9 @@
      3. `DELETE /products/:id` — получение элемента по ID
    - скриншоты результатов тестирования (встроены ниже):
 
-     ![GET /products](photo/pr3-1.png)
-     ![POST /products](photo/pr3-2.png)
-     ![GET /products/:id](photo/pr3-3.png)
+     ![GET /products](../photo/pr3-1.png)
+     ![POST /products](../photo/pr3-2.png)
+     ![GET /products/:id](../photo/pr3-3.png)
 
    - для изучения и воспроизведения достаточно открыть коллекцию Postman
 
@@ -36,11 +36,11 @@
    - `POST /v1/votes` — проголосовать за кота по ID
    - `GET /v1/images/search?limit=10&breed_ids=beng,abys&api_key={мой_апи_ключ}` — получение 10 фото конкретных пород
 5. Результаты представлены на скриншотах:
-   ![Request 1](photo/pr3-4.png)
-   ![Request 2](photo/pr3-5.png)
-   ![Request 3](photo/pr3-6.png)
-   ![Request 4](photo/pr3-7.png)
-   ![Request 5](photo/pr3-8.png)
+   ![Request 1](../photo/pr3-4.png)
+   ![Request 2](../photo/pr3-5.png)
+   ![Request 3](../photo/pr3-6.png)
+   ![Request 4](../photo/pr3-7.png)
+   ![Request 5](../photo/pr3-8.png)
 
 > 📁 Все изображения для отчёта находятся в каталоге `photo`.
 
