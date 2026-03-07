@@ -3,14 +3,14 @@ const { nanoid } = require("nanoid");
 const bcrypt = require("bcrypt");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const cors = require("cors");
 
 // Секретный ключ для подписи токенов
 const JWT_SECRET = "access_secret";
 
 // Время жизни токена
-const ACCESS_EXPIRES_IN = "15m";
+const ACCESS_EXPIRES_IN = "1m";
 
 const app = express();
 const port = 3000;
@@ -82,6 +82,7 @@ async function verifyPassword(password, passwordHash) {
 // Подключение Swagger
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(cors());
 app.use(express.json());
 
 // Логгер запросов
@@ -541,6 +542,7 @@ app.delete("/api/products/:id", authMiddleware, (req, res) => {
   res.json({ message: "Product deleted" });
 });
 
+app.use(cors());
 app.listen(port, () => {
   console.log(`Сервер запущен на http://localhost:${port}`);
   console.log(

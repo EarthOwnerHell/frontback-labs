@@ -1,16 +1,57 @@
-# React + Vite
+# API Layer (practises7-8/client/src/api)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Этот модуль содержит клиент для работы с backend API (`http://localhost:3000/api`) и централизованную обработку Bearer-токена.
 
-Currently, two official plugins are available:
+## Что реализовано
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `axios`-клиент с `baseURL`
+- Методы авторизации:
+  - `userRegister(user)`
+  - `userLogin(user)`
+  - `getMe()`
+- Методы для товаров:
+  - `getProducts()`
+  - `addProduct(product)`
+  - `getProductById(id)`
+  - `editProductById(id, product)`
+  - `deleteProductById(id)`
+- Управление токеном:
+  - `setAccessToken(token)`
+  - `clearAccessToken()`
 
-## React Compiler
+## Как работает Bearer-токен
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. При успешном `userLogin` сервер возвращает `accessToken`.
+2. Токен сохраняется в `localStorage` (`accessToken`).
+3. `axios` interceptor автоматически добавляет заголовок:
+   - `Authorization: Bearer <token>`
+4. Защищенные endpoint'ы backend (`/auth/me`, `/products/:id`, `PUT`, `DELETE`) начинают работать без ручной передачи токена в каждом запросе.
 
-## Expanding the ESLint configuration
+## Как это используется на фронте
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `RegistrationForm`:
+  - регистрация через `api.userRegister(...)`
+  - вход через `api.userLogin(...)`
+- `App`:
+  - проверяет наличие токена в `localStorage`
+  - переключает UI между формой входа и страницей товаров
+- `ProductPage`:
+  - вызывает `api.getMe()` для проверки авторизации
+  - использует CRUD-методы товаров
+  - при выходе вызывает `api.clearAccessToken()`
+
+## Поведение при истечении токена
+
+Если токен истек (в backend `ACCESS_EXPIRES_IN = "15m"`), защищенные методы вернут `401`.
+В текущей реализации это означает необходимость повторного входа.
+(Механизм refresh token не реализован.)
+
+## Пример использования
+
+```js
+import { api } from "./index";
+
+await api.userLogin({ email, password });
+const me = await api.getMe();
+const products = await api.getProducts();
+```
