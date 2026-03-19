@@ -33,12 +33,18 @@ function ProductPage({ onLogout }) {
   const [successText, setSuccessText] = useState("");
 
   const accessToken = localStorage.getItem("accessToken") || "";
+  const refreshToken = localStorage.getItem("refreshToken") || "";
 
   const accessTokenPreview = useMemo(() => {
     if (!accessToken) return "Токен не найден";
     if (accessToken.length < 24) return accessToken;
     return `${accessToken.slice(0, 18)}...${accessToken.slice(-8)}`;
   }, [accessToken]);
+
+  const refreshTokenPreview = useMemo(() => {
+    if (!refreshToken) return "Токен не найден";
+    return refreshToken;
+  }, [refreshToken]);
 
   const runAction = async (fn, successMessage) => {
     setErrorText("");
@@ -168,6 +174,11 @@ function ProductPage({ onLogout }) {
       <div className="token-card">
         <p className="token-card__title">Access Token</p>
         <code>{accessTokenPreview}</code>
+      </div>
+
+      <div className="token-card">
+        <p className="token-card__title">Refresh Token</p>
+        <code>{refreshTokenPreview}</code>
       </div>
 
       <div className="products-grid">
