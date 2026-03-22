@@ -9,9 +9,8 @@ const cors = require("cors");
 // Секретный ключ для подписи токенов
 const ACCESS_SECRET = "access_secret";
 const REFRESH_SECRET = "refresh_secret";
-
 // Время жизни токенов
-const ACCESS_EXPIRES_IN = "15m";
+const ACCESS_EXPIRES_IN = "15s";
 const REFRESH_EXPIRES_IN = "7d";
 
 const app = express();
@@ -278,10 +277,8 @@ app.post("/api/auth/login", async (req, res) => {
 
   refreshTokens.add(refreshToken);
 
-  res.json({
-    accessToken,
-    refreshToken,
-  });
+  console.log("Login tokens:", { accessToken, refreshToken });
+  res.json({ accessToken, refreshToken });
 });
 
 app.get("/api/auth/me", authMiddleware, (req, res) => {
