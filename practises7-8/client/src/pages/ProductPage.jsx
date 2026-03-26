@@ -176,11 +176,7 @@ function ProductPage({ onLogout }) {
           <button type="button" onClick={handleGetMe} disabled={isLoading}>
             Запросить профиль
           </button>
-          {me ? (
-            <pre>{JSON.stringify(me, null, 2)}</pre>
-          ) : (
-            <p className="hint">Нажми кнопку для проверки Bearer токена.</p>
-          )}
+          {me ? <pre>{JSON.stringify(me, null, 2)}</pre> : ""}
         </article>
 
         <article className="panel">

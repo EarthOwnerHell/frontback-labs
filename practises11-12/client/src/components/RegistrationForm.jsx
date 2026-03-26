@@ -27,6 +27,7 @@ function RegistrationForm({
     last_name: "",
     email: "",
     password: "",
+    role: "user",
   });
   const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
@@ -87,6 +88,7 @@ function RegistrationForm({
           last_name: form.last_name.trim(),
           email: form.email.trim(),
           password: form.password,
+          role: form.role,
         }
       : {
           email: form.email.trim(),
@@ -173,6 +175,20 @@ function RegistrationForm({
                   value={form.last_name}
                   onChange={updateField("last_name")}
                 />
+              </label>
+
+              <label htmlFor="role">
+                Роль
+                <select
+                  id="role"
+                  name="role"
+                  value={form.role}
+                  onChange={updateField("role")}
+                >
+                  <option value="user">user</option>
+                  <option value="seller">seller</option>
+                  <option value="admin">admin</option>
+                </select>
               </label>
             </>
           )}

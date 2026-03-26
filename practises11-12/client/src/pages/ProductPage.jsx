@@ -19,12 +19,24 @@ const emptyProductForm = {
 function ProductPage({ isAuthorized, onLogout, onLogin }) {
   const [products, setProducts] = useState([]);
   const [me, setMe] = useState(null);
+  const [users, setUsers] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [createForm, setCreateForm] = useState(emptyProductForm);
   const [updateForm, setUpdateForm] = useState(emptyProductForm);
+  const [userUpdateForm, setUserUpdateForm] = useState({
+    email: "",
+    first_name: "",
+    last_name: "",
+    password: "",
+    role: "",
+  });
 
-  const [lookupId, setLookupId] = useState("");
+  const [userLookupId, setUserLookupId] = useState("");
+  const [userUpdateId, setUserUpdateId] = useState("");
+  const [userDeleteId, setUserDeleteId] = useState("");
+  const [productLookupId, setProductLookupId] = useState("");
   const [updateId, setUpdateId] = useState("");
   const [deleteId, setDeleteId] = useState("");
 
@@ -80,16 +92,90 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
     }, "Профиль загружен");
   };
 
+  const handleRefresh = () => {
+    runAction(async () => {
+      const response = await api.refreshAccessToken();
+    }, "Токен обновлен");
+  };
+
   const handleGetById = () => {
-    if (!lookupId.trim()) {
+    if (!productLookupId.trim()) {
       setErrorText("Введи id товара");
       return;
     }
 
     runAction(async () => {
-      const product = await api.getProductById(lookupId.trim());
+      const product = await api.getProductById(productLookupId.trim());
       setSelectedProduct(product);
     }, "Товар найден");
+  };
+
+  const handleGetUsers = () => {
+    runAction(async () => {
+      const response = await api.getUsers();
+      setUsers(response);
+    });
+  };
+
+  const handleGetUserById = () => {
+    if (!userLookupId.trim()) {
+      setErrorText("Введи id пользователя");
+      return;
+    }
+    runAction(async () => {
+      const response = await api.getUserById(userLookupId.trim());
+      setSelectedUser(response);
+    });
+  };
+
+  const handleUpdateUserById = (event) => {
+    event.preventDefault();
+
+    if (!userUpdateId.trim()) {
+      setErrorText("Укажи id пользователя для обновления");
+      return;
+    }
+
+    const payload = {};
+    if (userUpdateForm.email.trim())
+      payload.email = userUpdateForm.email.trim();
+    if (userUpdateForm.first_name.trim())
+      payload.first_name = userUpdateForm.first_name.trim();
+    if (userUpdateForm.last_name.trim())
+      payload.last_name = userUpdateForm.last_name.trim();
+    if (userUpdateForm.password) payload.password = userUpdateForm.password;
+    if (userUpdateForm.role.trim()) payload.role = userUpdateForm.role.trim();
+
+    if (Object.keys(payload).length === 0) {
+      setErrorText("Заполни хотя бы одно поле для обновления");
+      return;
+    }
+
+    runAction(async () => {
+      const response = await api.editUserById(userUpdateId.trim(), payload);
+      setSelectedUser(response);
+      setUserUpdateForm({
+        email: "",
+        first_name: "",
+        last_name: "",
+        password: "",
+        role: "",
+      });
+    }, "Пользователь обновлен");
+  };
+
+  const handleDeleteUserById = () => {
+    if (!userDeleteId.trim()) {
+      setErrorText("Укажи id пользователя для удаления");
+      return;
+    }
+    runAction(async () => {
+      await api.deleteUserById(userDeleteId.trim());
+      if (selectedUser?.id === userDeleteId.trim()) {
+        setSelectedUser(null);
+      }
+      setUserDeleteId("");
+    }, "Пользователь заблокирован");
   };
 
   const handleCreate = (event) => {
@@ -188,8 +274,102 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
         <p className="token-card__title">Refresh Token</p>
         <code>{refreshTokenPreview}</code>
       </div>
+      <button type="button" onClick={handleRefresh}>
+        Refresh
+      </button>
 
       <div className="products-grid">
+        <article className="panel">
+          <h2>Получить список пользователей</h2>
+
+          <button type="button" onClick={handleGetUsers} disabled={isLoading}>
+            Получить
+          </button>
+
+          {users.length ? <pre>{JSON.stringify(users, null, 2)}</pre> : ""}
+        </article>
+        <article className="panel">
+          <h2>Получить пользователя по ID</h2>
+          <label>
+            ID пользователя
+            <input
+              value={userLookupId}
+              onChange={(e) => setUserLookupId(e.target.value)}
+              placeholder="например: a1b2c3"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={handleGetUserById}
+            disabled={isLoading}
+          >
+            Получить
+          </button>
+
+          {selectedUser ? (
+            <pre>{JSON.stringify(selectedUser, null, 2)}</pre>
+          ) : (
+            ""
+          )}
+        </article>
+        <article className="panel">
+          <h2>Удаление пользователя по ID</h2>
+          <label>
+            ID пользователя
+            <input
+              value={userDeleteId}
+              onChange={(e) => setUserDeleteId(e.target.value)}
+              placeholder="например: a1b2c3"
+            />
+          </label>
+          <button
+            type="button"
+            className="danger-btn"
+            onClick={handleDeleteUserById}
+            disabled={isLoading}
+          >
+            Удалить
+          </button>
+        </article>
+        <article className="panel">
+          <h2>Обновить пользователя по ID</h2>
+          <form onSubmit={handleUpdateUserById}>
+            <input
+              placeholder="ID пользователя"
+              value={userUpdateId}
+              onChange={(e) => setUserUpdateId(e.target.value)}
+            />
+            <input
+              placeholder="Email"
+              value={userUpdateForm.email}
+              onChange={updateField(setUserUpdateForm, "email")}
+            />
+            <input
+              placeholder="Имя"
+              value={userUpdateForm.first_name}
+              onChange={updateField(setUserUpdateForm, "first_name")}
+            />
+            <input
+              placeholder="Фамилия"
+              value={userUpdateForm.last_name}
+              onChange={updateField(setUserUpdateForm, "last_name")}
+            />
+            <input
+              placeholder="Пароль"
+              type="password"
+              value={userUpdateForm.password}
+              onChange={updateField(setUserUpdateForm, "password")}
+            />
+            <input
+              placeholder="Роль (user/seller/admin)"
+              value={userUpdateForm.role}
+              onChange={updateField(setUserUpdateForm, "role")}
+            />
+            <button type="submit" disabled={isLoading}>
+              Обновить
+            </button>
+          </form>
+        </article>
         <article className="panel">
           <h2>Проверка /auth/me</h2>
           <button type="button" onClick={handleGetMe} disabled={isLoading}>
@@ -203,8 +383,8 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
           <label>
             ID товара
             <input
-              value={lookupId}
-              onChange={(e) => setLookupId(e.target.value)}
+              value={productLookupId}
+              onChange={(e) => setProductLookupId(e.target.value)}
               placeholder="например: a1b2c3"
             />
           </label>
