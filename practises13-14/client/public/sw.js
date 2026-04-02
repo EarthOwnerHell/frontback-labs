@@ -1,9 +1,17 @@
-const CACHE_NAME = "notes-cache-v2";
+const CACHE_NAME = "notes-cache-v3";
 const ASSETS = [
   "/",
   "/index.html",
   "/manifest.json",
-  "/icons/icon-64x64.png",
+  "/icons/favicon.ico",
+  "/icons/apple-touch-icon.png",
+  "/icons/favicon-16x16.png",
+  "/icons/favicon-32x32.png",
+  "/icons/favicon-48x48.png",
+  "/icons/favicon-64x64.png",
+  "/icons/favicon-128x128.png",
+  "/icons/favicon-256x256.png",
+  "/icons/favicon-512x512.png",
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png",
 ];
