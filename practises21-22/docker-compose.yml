@@ -3,8 +3,6 @@ version: "3.8"
 services:
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
 
   backend1:
     build: ./server
@@ -12,6 +10,8 @@ services:
       PORT: 3000
       INSTANCE_NAME: backend-1
       REDIS_URL: redis://redis:6379
+    ports:
+      - "3000:3000"
     depends_on:
       - redis
 

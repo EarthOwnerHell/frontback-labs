@@ -41,6 +41,7 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
   const [deleteId, setDeleteId] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
 
@@ -78,7 +79,20 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
   };
 
   useEffect(() => {
-    runAction(loadProducts);
+    const loadInitialProducts = async () => {
+      setIsInitialLoading(true);
+      setErrorText("");
+
+      try {
+        await loadProducts();
+      } catch (error) {
+        setErrorText(normalizeError(error));
+      } finally {
+        setIsInitialLoading(false);
+      }
+    };
+
+    loadInitialProducts();
   }, []);
 
   const updateField = (setter, field) => (event) => {
@@ -282,7 +296,7 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
         <article className="panel">
           <h2>Получить список пользователей</h2>
 
-          <button type="button" onClick={handleGetUsers} disabled={isLoading}>
+          <button type="button" onClick={handleGetUsers}>
             Получить
           </button>
 
@@ -301,7 +315,6 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
           <button
             type="button"
             onClick={handleGetUserById}
-            disabled={isLoading}
           >
             Получить
           </button>
@@ -326,7 +339,6 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
             type="button"
             className="danger-btn"
             onClick={handleDeleteUserById}
-            disabled={isLoading}
           >
             Удалить
           </button>
@@ -365,14 +377,14 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
               value={userUpdateForm.role}
               onChange={updateField(setUserUpdateForm, "role")}
             />
-            <button type="submit" disabled={isLoading}>
+            <button type="submit">
               Обновить
             </button>
           </form>
         </article>
         <article className="panel">
           <h2>Проверка /auth/me</h2>
-          <button type="button" onClick={handleGetMe} disabled={isLoading}>
+          <button type="button" onClick={handleGetMe}>
             Запросить профиль
           </button>
           {me ? <pre>{JSON.stringify(me, null, 2)}</pre> : ""}
@@ -388,7 +400,7 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
               placeholder="например: a1b2c3"
             />
           </label>
-          <button type="button" onClick={handleGetById} disabled={isLoading}>
+          <button type="button" onClick={handleGetById}>
             Найти
           </button>
           {selectedProduct ? (
@@ -421,7 +433,7 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
               value={createForm.price}
               onChange={updateField(setCreateForm, "price")}
             />
-            <button type="submit" disabled={isLoading}>
+            <button type="submit">
               Создать
             </button>
           </form>
@@ -457,7 +469,7 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
               value={updateForm.price}
               onChange={updateField(setUpdateForm, "price")}
             />
-            <button type="submit" disabled={isLoading}>
+            <button type="submit">
               Обновить
             </button>
           </form>
@@ -477,7 +489,6 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
             type="button"
             className="danger-btn"
             onClick={handleDelete}
-            disabled={isLoading}
           >
             Удалить
           </button>
@@ -489,11 +500,11 @@ function ProductPage({ isAuthorized, onLogout, onLogin }) {
             <button
               type="button"
               onClick={() => runAction(loadProducts, "Список обновлен")}
-              disabled={isLoading}
             >
               Обновить список
             </button>
           </div>
+          {isInitialLoading ? <p className="hint">Загрузка списка...</p> : null}
           {products.length ? (
             <pre>{JSON.stringify(products, null, 2)}</pre>
           ) : (
